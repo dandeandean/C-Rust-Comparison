@@ -1,3 +1,6 @@
+mod maze;
+
 fn main() {
-    println!("Hello, world!");
+    let m = maze::build_maze(String::from("maze"));
+    dbg!("{}",m.map);
 }
