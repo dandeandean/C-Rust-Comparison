@@ -1,7 +1,8 @@
 mod maze;
 
 fn main() {
-    let m = maze::build_maze(String::from("maze"));
-    m.pretty_print();
+    let mut m = maze::build_maze(String::from("maze"));
     m.dbg_print();
+    // m.pretty_print();
+    m.bfs();
 }
