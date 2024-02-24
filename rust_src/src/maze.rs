@@ -1,5 +1,4 @@
-use std::fs;
-// use std::alloc::System;
+use std::{fs, usize};
 use std::collections::VecDeque;
 
 const ROWS:usize = 20;
@@ -20,14 +19,28 @@ pub struct Maze {
 pub struct Agent{
     pub location: (usize,usize),
     pub been_to: Vec<(usize,usize)>,
-    // pub path: Vec<(usize,usize)>
+    // pub path: Path
 }
 
+#[allow(dead_code)]
+struct Path {
+    pub current: (usize,usize),
+    pub prev: (usize,usize),
+}
+
+#[allow(dead_code)]
+fn build_path(point: (usize,usize), prev: (usize,usize)) -> Path{
+    Path {
+        current: point,
+        prev: prev
+    }
+}
 
 fn build_agent(point: (usize,usize)) -> Agent{
     Agent {
         location: point,
-        been_to: vec!{point}
+        been_to: vec!{point},
+        // path : build_path(point, point)
     }
 }
 
@@ -38,6 +51,7 @@ pub fn build_maze(file_name: String) -> Maze {
     let mut start:(usize,usize) = (0,0);
     let mut fin:(usize,usize) = (0,0);
     for (i,line) in lines.enumerate() {
+        // TODO: handle if the maze is not up to 50!
         for (j, symbol) in line.chars().enumerate() {
             match symbol {
                 ' ' => { 
@@ -68,6 +82,8 @@ pub fn build_maze(file_name: String) -> Maze {
 }
 
 impl Maze{
+
+    #[allow(dead_code)]
     pub fn dbg_print(&self){
         for i in self.map {
             for num in i {
@@ -129,25 +145,29 @@ impl Maze{
         out
     }
 
+
     pub fn bfs(&mut self) -> Agent{
         //BFS
         let mut queue: VecDeque<(usize,usize)> = VecDeque::new();
-        let mut agent : Agent = build_agent(self.start);
+        let mut agent : Box<Agent> = Box::new(build_agent(self.start));
         queue.push_back(agent.location);
         while !queue.is_empty() && agent.location != self.fin{
             let cur = queue.pop_front().unwrap();
             let neighbors = self.get_walkable_neighbors(cur);
             for coord in neighbors{
+                // self.map[coord.0][coord.1] += 1;
                 if ! agent.been_to.contains(&coord){
                     queue.push_back(coord);
                     agent.been_to.push(coord);
-                    self.map[coord.0][coord.1] = PATH;
+                    // agent.path.current = coord;
+                    // self.map[coord.0][coord.1] = PATH;
                 }
             }
         }
-        // FIXME
+        // FIXME:  we shouldn't have to go back to correct this
         self.map[self.fin.0][self.fin.1] = GOAL;
         self.pretty_print();
-        agent
+        *agent
     }
+
 }
