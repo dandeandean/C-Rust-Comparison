@@ -16,6 +16,8 @@ pub struct Maze {
     pub fin: (usize,usize),
 }
 
+
+#[derive(Debug,Clone)]
 pub struct Agent{
     pub location: (usize,usize),
     pub been_to: Vec<(usize,usize)>,
@@ -23,13 +25,14 @@ pub struct Agent{
 }
 
 #[allow(dead_code)]
-struct Path<'p>{
+#[derive(Debug,Clone, Copy)]
+pub struct Path<'p>{
     pub current: (usize,usize),
-    pub prev: &'p(usize,usize),
+    pub prev: Option<&'p Path<'p>>
 }
 
 #[allow(dead_code)]
-fn build_path(point: (usize,usize), prev: &(usize,usize)) -> Path{
+fn build_path<'p>(point: (usize,usize), prev: Option<&'p Path<'p>> ) -> Path{
     Path {
         current: point,
         prev: prev
@@ -81,7 +84,7 @@ pub fn build_maze(file_name: String) -> Maze {
     }
 }
 
-impl Maze{
+impl Maze {
 
     #[allow(dead_code)]
     pub fn dbg_print(&self){
@@ -145,29 +148,55 @@ impl Maze{
         out
     }
 
-
-    pub fn bfs(&mut self) -> Agent{
+    pub fn bfs(&mut self) -> Option<Vec<(usize,usize)>>{
         //BFS
         let mut queue: VecDeque<(usize,usize)> = VecDeque::new();
-        let mut agent : Box<Agent> = Box::new(build_agent(self.start));
+        let mut agent : Agent = build_agent(self.start);
         queue.push_back(agent.location);
-        while !queue.is_empty() && agent.location != self.fin{
-            let cur = queue.pop_front().unwrap();
-            let neighbors = self.get_walkable_neighbors(cur);
-            for coord in neighbors{
-                // self.map[coord.0][coord.1] += 1;
-                if ! agent.been_to.contains(&coord){
-                    queue.push_back(coord);
-                    agent.been_to.push(coord);
-                    // agent.path.current = coord;
-                    self.map[coord.0][coord.1] = PATH;
+        while !queue.is_empty() {
+            let parent = queue.pop_front().unwrap();
+            let neighbors: Vec<(usize, usize)> = self.get_walkable_neighbors(parent);
+            let mut parent_agent:Agent = build_agent(parent);
+            //FIXME: below is the bug!
+            parent_agent.been_to = agent.been_to.clone(); 
+            for child in neighbors {
+                let mut baby_agent: Agent = build_agent(child);
+                // baby_agent.been_to = parent_agent.been_to.clone(); 
+                baby_agent.been_to.push(parent);
+                if ! agent.been_to.contains(&child){
+                    queue.push_back(child);
+                    agent.goto(child);
+                    if child == self.fin {
+                        let mut cur = baby_agent.clone();
+                        while cur.location != self.start {
+                            cur.goback();
+                        }
+                        return Some(baby_agent.been_to);
+                    }
                 }
             }
         }
-        // FIXME:  we shouldn't have to go back to correct this
-        self.map[self.fin.0][self.fin.1] = GOAL;
-        self.pretty_print();
-        *agent
+        None
     }
 
+    pub fn draw_back(&mut self, points : Vec<(usize,usize)>) {
+        // let mut cur_p: &Path = &p;
+        for point in points{
+            self.map[point.0][point.1] = PATH;
+        }
+        self.map[self.start.0][self.start.1] = START;
+        self.map[self.fin.0][self.fin.1] = GOAL;
+        self.pretty_print();
+    }
+}
+
+impl Agent {
+    fn goto(&mut self, new_location: (usize,usize)) {
+        self.been_to.push(self.location);
+        self.location = new_location;
+    }
+    fn goback(&mut self) {
+        let last = self.been_to.pop().unwrap();
+        self.location = last;
+    }
 }
