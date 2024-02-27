@@ -23,13 +23,13 @@ pub struct Agent{
 }
 
 #[allow(dead_code)]
-struct Path {
+struct Path<'p>{
     pub current: (usize,usize),
-    pub prev: (usize,usize),
+    pub prev: &'p(usize,usize),
 }
 
 #[allow(dead_code)]
-fn build_path(point: (usize,usize), prev: (usize,usize)) -> Path{
+fn build_path(point: (usize,usize), prev: &(usize,usize)) -> Path{
     Path {
         current: point,
         prev: prev
@@ -160,7 +160,7 @@ impl Maze{
                     queue.push_back(coord);
                     agent.been_to.push(coord);
                     // agent.path.current = coord;
-                    // self.map[coord.0][coord.1] = PATH;
+                    self.map[coord.0][coord.1] = PATH;
                 }
             }
         }
