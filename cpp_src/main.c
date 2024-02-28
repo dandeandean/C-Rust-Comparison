@@ -8,5 +8,6 @@ int main(int argc, char * argv[]){
     }
     printf("Parsing: %s\n",argv[1]);
     loadMaze(argv[1]);
+    // print_map();
     return 0;
 }

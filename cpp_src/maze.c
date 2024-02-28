@@ -1,13 +1,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include "maze.h"
+#include <string.h>
 
-#define BUFSIZE 1000
-#define COLS 50
-#define ROWS 20
-
-char* map[ROWS][COLS];
-
+int map[ROWS][COLS];
+typedef enum Symbol{
+    PATH,
+    WALL,
+    WALK,
+    DUNNO 
+} Symbol;
 
 int fileSize(char *filename) {
     /*From Lab1 code*/
@@ -17,24 +20,33 @@ int fileSize(char *filename) {
     else
         return file_status.st_size;
 }
+
 int loadMaze(char * fileName){
     char buf[BUFSIZE];
-    int row,col;
+
     FILE * fd = fopen(fileName, "r");
     if (fd==NULL) {
         printf("Failed to load %s \n", fileName);
         return -1;
     }
 
-    fread(buf, 1, fileSize(fileName), fd);
-
+    fread(buf, sizeof(char), fileSize(fileName), fd);
     printf(" file size = %d\n", fileSize(fileName));
     printf("%s\n",buf);
-    for (int row = 0 ; row < ROWS; row ++){
-        for (int col = 0; col < COLS; col ++){
-            // map[row][col]  = file[]
-        }
-    }
+    // memcpy(map,(const void *)buf,fileSize(fileName));
+    // for (int i=0; i < ROWS; i++){
+    //     for (int j=0; j < COLS; j++){
+    //         printf("%c",map[i][j]);
+    //     }
+    // }
     printf("Done!\n");
     return 0;
+}
+
+void print_map(void){
+    for (int i=0; i < ROWS; i++){
+        for (int j=0; j < COLS; j++){
+            printf("%d",map[i][j]);
+        }
+    }
 }
