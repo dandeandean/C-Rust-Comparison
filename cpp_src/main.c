@@ -7,7 +7,10 @@ int main(int argc, char * argv[]){
         return 1;
     }
     printf("Parsing: %s\n",argv[1]);
-    loadMaze(argv[1]);
-    // print_map();
+    // load_maze(argv[1]);
+    Maze * maze = init_maze(argv[1]);
+
+    printf("\n");
+    print_map(maze);
     return 0;
 }
