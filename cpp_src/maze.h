@@ -5,19 +5,20 @@
 #define ROWS 20
 #define BUFSIZE ROWS *COLS + 20 // plus 20
 
+#include <cstring>
+#include <deque>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/stat.h>
-#include <fstream>
-#include <sstream>
 #include <string>
-#include <cstring>
-#include <iostream>
+#include <sys/stat.h>
 #include <vector>
 
 typedef enum Symbol { PATH, WALL, WALK, START, GOAL, UNK } Symbol;
 
-typedef struct Point{
+typedef struct Point {
   int row;
   int col;
 } Point;
@@ -29,14 +30,16 @@ typedef struct Node {
 } Node;
 
 typedef struct Path {
-  Node last_node;
+  Node *last_point;
 } Path;
 
 typedef struct Maze {
   Symbol imap[ROWS][COLS];
+  Node *nodes[ROWS][COLS];
   Node *start;
   Node *end;
   std::vector<Point> get_walkable_neighbors(Point p);
+  Path *bfs(void);
 } Maze;
 
 Symbol char_to_sym(char c) {
@@ -73,7 +76,7 @@ char sym_to_char(Symbol s) {
   }
 }
 
-int load_maze(std::string file_name, Maze *maze) ;
+int load_maze(std::string file_name, Maze *maze);
 void print_map(Maze *m) {
   for (int i = 0; i < ROWS; i++) {
     for (int j = 0; j < COLS; j++) {

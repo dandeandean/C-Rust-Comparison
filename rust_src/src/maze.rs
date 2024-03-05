@@ -57,27 +57,27 @@ pub fn build_maze(file_name: String) -> Maze {
         // TODO: handle if the maze is not up to 50!
         for (j, symbol) in line.chars().enumerate() {
             match symbol {
-                ' ' => { 
+                ' ' => {
                     mealhouse [i][j] = WALK;
                 }
-                'S' => { 
+                'S' => {
                     mealhouse [i][j] = START;
                     start = (i,j);
                 }
-                'F' => { 
+                'F' => {
                     mealhouse [i][j] = GOAL;
                     fin = (i,j);
                 }
                 '#' =>{
                     mealhouse [i][j] = WALL;
                 }
-                _   => { 
+                _   => {
                     mealhouse [i][j] = UNK;
                 }
             }
         }
     }
-    Maze { 
+    Maze {
         map : mealhouse,
         start : start,
         fin : fin
@@ -158,10 +158,10 @@ impl Maze {
             let neighbors: Vec<(usize, usize)> = self.get_walkable_neighbors(parent);
             let mut parent_agent:Agent = build_agent(parent);
             //FIXME: below is the bug!
-            parent_agent.been_to = agent.been_to.clone(); 
+            parent_agent.been_to = agent.been_to.clone();
             for child in neighbors {
                 let mut baby_agent: Agent = build_agent(child);
-                // baby_agent.been_to = parent_agent.been_to.clone(); 
+                // baby_agent.been_to = parent_agent.been_to.clone();
                 baby_agent.been_to.push(parent);
                 if ! agent.been_to.contains(&child){
                     queue.push_back(child);

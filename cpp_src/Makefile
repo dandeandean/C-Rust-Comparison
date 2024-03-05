@@ -1,2 +1,2 @@
-main: main.cc
-	g++ main.cc -o run
+main: main.cpp
+	clang++ main.cpp -o run
