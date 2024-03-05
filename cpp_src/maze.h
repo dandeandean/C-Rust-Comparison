@@ -7,10 +7,20 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/stat.h>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <cstring>
+#include <iostream>
+#include <vector>
 
 typedef enum Symbol { PATH, WALL, WALK, START, GOAL, UNK } Symbol;
+
+typedef struct Point{
+  int row;
+  int col;
+} Point;
 
 typedef struct Node {
   Symbol symbol;
@@ -23,10 +33,10 @@ typedef struct Path {
 } Path;
 
 typedef struct Maze {
-  // Node map[ROWS][COLS];
-  int imap[ROWS][COLS];
+  Symbol imap[ROWS][COLS];
   Node *start;
   Node *end;
+  std::vector<Point> get_walkable_neighbors(Point p);
 } Maze;
 
 Symbol char_to_sym(char c) {
@@ -63,17 +73,13 @@ char sym_to_char(Symbol s) {
   }
 }
 
-int load_maze(char *file_name, Maze *maze);
-// void print_map(Node ** map);
-int count = 0;
+int load_maze(std::string file_name, Maze *maze) ;
 void print_map(Maze *m) {
   for (int i = 0; i < ROWS; i++) {
     for (int j = 0; j < COLS; j++) {
       printf("%c", sym_to_char(m->imap[i][j]));
-      count++;
-      // printf("|%x|",m->imap[i][j]);
     }
-    printf("  count= %d\n", count);
+    std::cout << std::endl;
   }
 }
 /*From Lab1 code*/
@@ -84,4 +90,5 @@ int fileSize(char *filename) {
   else
     return file_status.st_size;
 }
+
 #endif // MACRO
