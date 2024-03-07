@@ -21,25 +21,33 @@ typedef enum Symbol { PATH, WALL, WALK, START, GOAL, UNK } Symbol;
 typedef struct Point {
   int row;
   int col;
+  bool operator == (const Point &p){ 
+    return (row == p.row && col == p.col) ;
+  } 
 } Point;
 
 typedef struct Node {
   Symbol symbol;
   int row;
   int col;
+  bool operator == (const Node &p){ 
+    return (row == p.row && col == p.col && symbol == p.symbol) ;
+  } 
 } Node;
 
 typedef struct Path {
   Node *last_point;
 } Path;
 
+
 typedef struct Maze {
   Symbol imap[ROWS][COLS];
   Node *nodes[ROWS][COLS];
   Node *start;
   Node *end;
-  std::vector<Point> get_walkable_neighbors(Point p);
-  Path *bfs(void);
+  std::vector<Node*> get_walkable_neighbors(int row, int col);
+  Path *bfs(void);  
+  void print_map(void);
 } Maze;
 
 Symbol char_to_sym(char c) {
@@ -77,10 +85,12 @@ char sym_to_char(Symbol s) {
 }
 
 int load_maze(std::string file_name, Maze *maze);
-void print_map(Maze *m) {
+
+void Maze::print_map(void) {
   for (int i = 0; i < ROWS; i++) {
     for (int j = 0; j < COLS; j++) {
-      printf("%c", sym_to_char(m->imap[i][j]));
+      // printf("%c", sym_to_char(m->imap[i][j]));
+      std::cout << sym_to_char(this->nodes[i][j]->symbol) ;
     }
     std::cout << std::endl;
   }
