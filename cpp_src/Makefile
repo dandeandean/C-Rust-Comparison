@@ -1,2 +1,2 @@
-main: main.cpp
-	clang++ -std=c++11 main.cpp -o run
+all:
+	gcc main.c -o run
