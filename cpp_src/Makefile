@@ -1,2 +1,2 @@
 all:
-	gcc main.c -o run
+	clang++ -std=c++17 main.cc -o run
