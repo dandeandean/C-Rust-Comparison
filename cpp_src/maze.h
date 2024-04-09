@@ -68,8 +68,8 @@ typedef struct Coord {
     return (x == c.x && y == c.y);
   }
 } Coord;
-Coord *grid_start = new Coord(0, 0);
-Coord *grid_finish = new Coord(ROWS - 1, COLS - 1);
+// Coord *grid_start = new Coord(0, 0);
+// Coord *grid_finish = new Coord(ROWS - 1, COLS - 1);
 char sym_to_char(int s) {
   switch (s) {
   case PATH:

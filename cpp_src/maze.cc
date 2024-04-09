@@ -77,7 +77,7 @@ std::vector<Coord *> neighbors(Coord *c) {
   return out;
 }
 
-Coord *bfs(void) {
+Coord *bfs(Coord *grid_start, Coord *grid_finish) {
   /*FIXME: hard coded start */
   std::deque<Coord *> q;
   std::vector<Coord *> been_to;
