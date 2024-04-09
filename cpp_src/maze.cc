@@ -1,4 +1,8 @@
 #include "maze.h"
+#include <algorithm>
+#include <cstddef>
+#include <iostream>
+#include <queue>
 #include <vector>
 
 int char_to_int(char **p) {
@@ -52,8 +56,9 @@ int load_grid(char *filename) {
   printf(" done loading maze!\n");
   return 0;
 }
-std::vector<Coord> neighbors(Coord *c) {
-  std::vector<Coord> out;
+
+std::vector<Coord *> neighbors(Coord *c) {
+  std::vector<Coord *> out;
   int x = c->x;
   int y = c->y;
   int xs[4] = {-1, 1, 0, 0};
@@ -61,17 +66,49 @@ std::vector<Coord> neighbors(Coord *c) {
   for (int i = 0; i < 4; i++) {
     int row = c->x + xs[i];
     int col = c->y + ys[i];
+
     if ((col < 0 || col >= COLS) || (row < 0 || row >= ROWS)) {
       continue;
     }
-    if (grid[row][col] != WALL) {
-      out.push_back(Coord(row, col));
+    if (grid[row][col] == PATH || grid[row][col] == GOAL) {
+      out.push_back(new Coord(row, col, c));
     }
   }
   return out;
 }
-std::vector<Coord> bfs(void) {
-  std::vector<Coord> out;
-  std::deque<Coord> q;
-  return out;
+
+Coord *bfs(void) {
+  /*FIXME: hard coded start */
+  std::deque<Coord *> q;
+  std::vector<Coord *> been_to;
+  q.push_back(grid_start);
+  while (!q.empty()) {
+    Coord *cur = q.front();
+    q.pop_front();
+    for (Coord *child : neighbors(cur)) {
+      /*Mystery function */
+      bool unvisited =
+          std::find_if(been_to.begin(), been_to.end(), [child](Coord *c) {
+            return *c == *child;
+          }) == been_to.end();
+
+      if (unvisited) {
+        been_to.push_back(child);
+        q.push_back(child);
+        if (child->x == grid_finish->x && child->y == grid_finish->y) {
+          return child;
+        }
+      }
+    }
+  }
+  return new Coord(-1, -1);
+}
+
+void draw_back(Coord *end) {
+  Coord *cur = end->parent;
+  while (cur->parent != NULL) {
+    grid[cur->x][cur->y] = WALK;
+    cur = cur->parent;
+  }
+  print_grid();
 }

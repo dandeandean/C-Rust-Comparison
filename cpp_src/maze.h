@@ -10,7 +10,7 @@
 int grid[ROWS][COLS] = {
     {3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+    {1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -53,17 +53,23 @@ int grid[ROWS][COLS] = {
 typedef enum Symbol { WALL, PATH, WALK, START, GOAL } Symbol;
 
 typedef struct Coord {
+  /*This construction is a bit dumb */
   Coord *parent;
   int x;
   int y;
 
   Coord(int x, int y, Coord *p = NULL) {
     parent = p;
-    x = x;
-    y = y;
+    this->x = x;
+    this->y = y;
+  }
+  bool operator==(const Coord &c) {
+    // printf("== called!\n");
+    return (x == c.x && y == c.y);
   }
 } Coord;
-
+Coord *grid_start = new Coord(0, 0);
+Coord *grid_finish = new Coord(ROWS - 1, COLS - 1);
 char sym_to_char(int s) {
   switch (s) {
   case PATH:
