@@ -1,73 +1,76 @@
-#ifndef MAZE_H
-#define MAZE_H
-
-#define COLS 50
-#define ROWS 20
-#define BUFSIZE ROWS *COLS + 20 // plus 20
-
-#include <cstring>
+#pragma once
+#include <cstddef>
 #include <deque>
-#include <fstream>
-#include <iostream>
-#include <sstream>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string>
 #include <sys/stat.h>
 #include <vector>
+#define ROWS 20
+#define COLS 50
 
-typedef enum Symbol { PATH, WALL, WALK, START, GOAL, UNK } Symbol;
+int grid[ROWS][COLS] = {
+    {3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+     1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1,
+     1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4}};
 
-typedef struct Point {
-  int row;
-  int col;
-  bool operator == (const Point &p){ 
-    return (row == p.row && col == p.col) ;
-  } 
-} Point;
+typedef enum Symbol { WALL, PATH, WALK, START, GOAL } Symbol;
 
-typedef struct Node {
-  Symbol symbol;
-  int row;
-  int col;
-  bool operator == (const Node &p){ 
-    return (row == p.row && col == p.col && symbol == p.symbol) ;
-  } 
-} Node;
+typedef struct Coord {
+  /*This construction is a bit dumb */
+  Coord *parent;
+  int x;
+  int y;
 
-typedef struct Path {
-  Node *last_point;
-} Path;
-
-
-typedef struct Maze {
-  Symbol imap[ROWS][COLS];
-  Node *nodes[ROWS][COLS];
-  Node *start;
-  Node *end;
-  std::vector<Node*> get_walkable_neighbors(int row, int col);
-  Path *bfs(void);  
-  void print_map(void);
-} Maze;
-
-Symbol char_to_sym(char c) {
-  switch (c) {
-  case ' ':
-    return PATH;
-  case '#':
-    return WALL;
-  case 'S':
-    return START;
-  case 'F':
-    return GOAL;
-  case '.':
-    return WALK;
-  default:
-    return UNK;
+  Coord(int x, int y, Coord *p = NULL) {
+    parent = p;
+    this->x = x;
+    this->y = y;
   }
-}
-
-char sym_to_char(Symbol s) {
+  bool operator==(const Coord &c) {
+    // printf("== called!\n");
+    return (x == c.x && y == c.y);
+  }
+} Coord;
+Coord *grid_start = new Coord(0, 0);
+Coord *grid_finish = new Coord(ROWS - 1, COLS - 1);
+char sym_to_char(int s) {
   switch (s) {
   case PATH:
     return ' ';
@@ -80,28 +83,18 @@ char sym_to_char(Symbol s) {
   case WALK:
     return '.';
   default:
-    return '?';
+    return (char)s;
   }
 }
 
-int load_maze(std::string file_name, Maze *maze);
-
-void Maze::print_map(void) {
-  for (int i = 0; i < ROWS; i++) {
-    for (int j = 0; j < COLS; j++) {
-      // printf("%c", sym_to_char(m->imap[i][j]));
-      std::cout << sym_to_char(this->nodes[i][j]->symbol) ;
+void print_grid(void) {
+  printf("+--------------------------------------------------+\n");
+  for (int row = 0; row < ROWS; row++) {
+    printf("|");
+    for (int col = 0; col < COLS; col++) {
+      printf("%c", sym_to_char(grid[row][col]));
     }
-    std::cout << std::endl;
+    printf("|\n");
   }
+  printf("+--------------------------------------------------+\n");
 }
-/*From Lab1 code*/
-int fileSize(char *filename) {
-  struct stat file_status;
-  if (stat(filename, &file_status) < 0)
-    return -1;
-  else
-    return file_status.st_size;
-}
-
-#endif // MACRO
