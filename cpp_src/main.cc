@@ -6,7 +6,6 @@ int main(int argc, char *argv[]) {
   Coord *grid_start;
   Coord *grid_finish;
   if (argc == 2) {
-    printf("Loading Maze\n");
     load_grid(argv[1]);
   } else {
     std::cout << "Using Default Maze\n";
