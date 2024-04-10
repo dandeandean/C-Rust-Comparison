@@ -27,5 +27,17 @@ Our program will be a maze solver. The input will be a text document that contai
 * construct an input that will trigger the crash in the C program
 * rewrite the program with rust, and show that the program will not crash under the same input
 
+### Usage
+  #### Rust
+  Navigate to rust_src
+  ```shell
+    cargo r <path to maze>
+  ```
+  #### Cpp
+  Navigate to cpp_src
+  ```shell
+    make && run <path to maze>
+  ```
+
 # Part C 
 ### Based on the experience in b, would you like to use rust in your future development? why?
