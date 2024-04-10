@@ -11,6 +11,10 @@ fn main() {
     println!("Reading... {}", file_name);
     let mut m = maze::build_maze(String::from(file_name));
     m.pretty_print();
-    let path = m.bfs().unwrap();
-    m.draw_back(path);
+    let path = m.bfs();
+    if path.is_none() {
+        println!("No path found!");
+    } else {
+        m.draw_back(path.unwrap());
+    }
 }
