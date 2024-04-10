@@ -9,7 +9,6 @@ const WALL: i32 = 0;
 const STEPS: i32 = 2;
 const GOAL: i32 = 5;
 const START: i32 = 4;
-const UNK: i32 = -1;
 pub struct Maze {
     pub map: [[i32; COLS]; ROWS],
     pub start: (usize, usize),
@@ -32,23 +31,45 @@ pub fn build_maze(file_name: String) -> Maze {
         // TODO: handle if the maze is not up to 50!
         for (j, symbol) in line.chars().enumerate() {
             // TODO: use types instead of strings
+            // if i >= ROWS || j >= COLS {
+            //     panic!("The maze is not the right shape!");
+            // }
             match symbol {
                 ' ' => {
-                    mealhouse[i][j] = WALKABLE;
+                    // See: https://doc.rust-lang.org/std/vec/struct.Vec.html
+                    // There has GOT to be a better way of doing this
+                    if let Some(row) = mealhouse.get_mut(i) {
+                        if let Some(ele) = row.get_mut(j) {
+                            *ele = WALKABLE;
+                        }
+                    }
+                    // mealhouse[i][j] = WALKABLE;
                 }
                 'S' => {
-                    mealhouse[i][j] = START;
-                    start = (i, j);
+                    if let Some(row) = mealhouse.get_mut(i) {
+                        if let Some(ele) = row.get_mut(j) {
+                            *ele = START;
+                            start = (i, j);
+                        }
+                    }
+                    // mealhouse[i][j] = START;
                 }
                 'F' => {
-                    mealhouse[i][j] = GOAL;
-                    fin = (i, j);
-                }
-                '#' => {
-                    mealhouse[i][j] = WALL;
+                    if let Some(row) = mealhouse.get_mut(i) {
+                        if let Some(ele) = row.get_mut(j) {
+                            *ele = GOAL;
+                            fin = (i, j);
+                        }
+                    }
+                    // mealhouse[i][j] = GOAL;
                 }
                 _ => {
-                    mealhouse[i][j] = UNK;
+                    if let Some(row) = mealhouse.get_mut(i) {
+                        if let Some(ele) = row.get_mut(j) {
+                            *ele = WALL;
+                        }
+                    }
+                    // mealhouse[i][j] = WALL;
                 }
             }
         }
