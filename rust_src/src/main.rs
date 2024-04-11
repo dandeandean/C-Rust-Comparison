@@ -8,7 +8,6 @@ fn main() {
     } else {
         file_name = args.last().unwrap();
     }
-    println!("Reading... {}", file_name);
     let mut m = maze::build_maze(String::from(file_name));
     m.pretty_print();
     let path = m.bfs();
