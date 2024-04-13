@@ -30,47 +30,31 @@ pub fn build_maze(file_name: String) -> Maze {
     for (i, line) in lines.enumerate() {
         // TODO: handle if the maze is not up to 50!
         for (j, symbol) in line.chars().enumerate() {
-            // TODO: use types instead of strings
-            // if i >= ROWS || j >= COLS {
-            //     panic!("The maze is not the right shape!");
-            // }
+            let symbol_to_write;
             match symbol {
                 ' ' => {
-                    // See: https://doc.rust-lang.org/std/vec/struct.Vec.html
-                    // There has GOT to be a better way of doing this
-                    if let Some(row) = mealhouse.get_mut(i) {
-                        if let Some(ele) = row.get_mut(j) {
-                            *ele = WALKABLE;
-                        }
-                    }
-                    // mealhouse[i][j] = WALKABLE;
+                    symbol_to_write = WALKABLE;
                 }
                 'S' => {
-                    if let Some(row) = mealhouse.get_mut(i) {
-                        if let Some(ele) = row.get_mut(j) {
-                            *ele = START;
-                            start = (i, j);
-                        }
-                    }
-                    // mealhouse[i][j] = START;
+                    symbol_to_write = START;
+                    start = (i, j);
                 }
                 'F' => {
-                    if let Some(row) = mealhouse.get_mut(i) {
-                        if let Some(ele) = row.get_mut(j) {
-                            *ele = GOAL;
-                            fin = (i, j);
-                        }
-                    }
-                    // mealhouse[i][j] = GOAL;
+                    symbol_to_write = GOAL;
+                    fin = (i, j);
                 }
                 _ => {
-                    if let Some(row) = mealhouse.get_mut(i) {
-                        if let Some(ele) = row.get_mut(j) {
-                            *ele = WALL;
-                        }
-                    }
-                    // mealhouse[i][j] = WALL;
+                    symbol_to_write = WALL;
                 }
+            }
+
+            // See: https://doc.rust-lang.org/std/vec/struct.Vec.html
+            if let Some(row) = mealhouse.get_mut(i) {
+                if let Some(ele) = row.get_mut(j) {
+                    *ele = symbol_to_write;
+                }
+            } else {
+                panic!("The maze is the wrong shape! Exiting.");
             }
         }
     }

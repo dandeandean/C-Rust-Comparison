@@ -2,7 +2,7 @@ mod maze;
 use std::env;
 fn main() {
     let args: Vec<_> = env::args().collect();
-    let mut file_name = "default-maze";
+    let mut file_name = "./src/default-maze";
     if args.len() < 2 {
         println!("No file provided, using default maze.");
     } else {
