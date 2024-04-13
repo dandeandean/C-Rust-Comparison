@@ -1,5 +1,4 @@
 use std::collections::VecDeque;
-// use std::rc::Rc;
 use std::{fs, usize};
 const ROWS: usize = 20;
 const COLS: usize = 50;
@@ -30,6 +29,9 @@ pub fn build_maze(file_name: String) -> Maze {
     for (i, line) in lines.enumerate() {
         // TODO: handle if the maze is not up to 50!
         for (j, symbol) in line.chars().enumerate() {
+            if line.len() != 50 {
+                panic!("The maze is the wrong shape! Exiting.");
+            }
             let symbol_to_write;
             match symbol {
                 ' ' => {
