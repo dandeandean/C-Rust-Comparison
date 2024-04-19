@@ -81,7 +81,7 @@ Rust is designed to provide control over low-level details such as memory layout
 ## Reasons Not to Use Rust
 
 ### Speed of Development 
-There is only one main reason against the use of Rust in development. That is the speed of development due to the Borrow Checker. This was a large factor in the speed of development in this project. It is worth mentioning that the speed of development will definitely increase as the programmer becomes more skilled in Rust. 
+There is only one main reason against the use of Rust in development. That is the speed of development due to the Borrow Checker refusing to compile the code. This was a large factor in the speed of development on this project. It is worth mentioning that the speed of development will definitely increase as the programmer becomes more skilled in Rust. 
 
 ## Conclusion
 Our analysis on the Rust code from our project provided keen insights on secure code practices, developers can gain insights into how Rust's features and ecosystem align with the requirements of future development projects. The practical experience of working with Rust's memory safety features and speed reinforces the decision to use Rust in security-sensitive domains. Developers can confidently adopt Rust knowing that it offers practical solutions to common challenges in software development, especially in terms of security and reliability.
