@@ -121,7 +121,10 @@ For example: let lines = file.lines();
 Rust programs often rely on external dependencies, which may contain memory safety bugs. While Rust's safety guarantees apply to safe Rust code, unsafe code within dependencies could introduce vulnerabilities. It's essential to vet dependencies for security issues and keep them updated to minimize risks. 
 
 ### Memory Leaks and Resource Exhaustion: 
-For example: ```Rust return Some(child); ```
+For example:
+```Rust
+Rust return Some(child);
+```
 
 Improper resource management can lead to memory leaks or resource exhaustion. While Rust's ownership system mitigates many memory-related issues, incorrect handling of resources like file handles or network connections could still occur. Proper resource management, such as using RAII patterns or Rust's Drop trait, is essential to prevent these vulnerabilities. [3] 
 
