@@ -47,7 +47,7 @@ Our program will be a maze solver. The input will be a text document that contai
 ### Memory Safety:
 The Rust code showcases various features that ensure memory safety, such as the use of safe abstractions like `_VecDeque_` instead of raw pointers, and the absence of manual memory management. For instance, in the `_build_vc_from_parent_` function, Rust's ownership system ensures that memory is managed safely when creating a new `_VisitedCell_` struct, mitigating the risk of memory leaks or undefined behavior. This project demonstrates how Rust's memory safety features contribute to writing secure and reliable code.
 
-In the process of rewriting the C++ program to Rust, developers likely encountered and addressed memory-related issues such as buffer overflows and dangling pointers. Rust's ownership system ensures memory safety by enforcing strict rules at compile-time, preventing common memory errors that are prevalent in languages like C or C++ [1]. This enhanced memory safety reduces the risk of security vulnerabilities, making Rust a favorable choice for future development projects, especially in security-critical domains.
+In the process of rewriting the C++ program to Rust, developers likely encountered and addressed memory-related issues such as buffer overflows and dangling pointers. Rust's ownership system ensures memory safety by enforcing strict rules at compile-time, preventing common memory errors that are prevalent in languages like C or C++ [7]. This enhanced memory safety reduces the risk of security vulnerabilities, making Rust a favorable choice for future development projects, especially in security-critical domains.
 
 ``` Rust
 fn build_vc_from_parent(coord: (usize, usize), parent: &VisitedCell) -> VisitedCell {
@@ -74,10 +74,10 @@ This code from _Maze.rs_ demonstrates how Rust's type system enables developers 
 These functions were implemented differently in C++, as the raw pointer arithmetic made it more difficult to write a Maze struct. Furthermore, in C++ it was trivial to point to the parent Cells, but this was not trivial in Rust. We could have designed it using Box variable to allocated them on the stack and reference back to them, but we decided to go with the simpler method of cloning, which ensured memory safety at the cost of time and space complexity.
 ### Interoperability with C
 
-Rust’s ability to interoperate with C libraries is a significant advantage when working with existing codebases or libraries. Rust’s foreign function interface (FFI) allows it to call C functions directly from Rust code [2]. This means you can leverage existing C libraries without having to rewrite them in Rust. Additionally, this feature allows for a gradual migration of a C or C++ codebase to Rust, which can be beneficial in large, complex projects.
+Rust’s ability to interoperate with C libraries is a significant advantage when working with existing codebases or libraries. Rust’s foreign function interface (FFI) allows it to call C functions directly from Rust code [8]. This means you can leverage existing C libraries without having to rewrite them in Rust. Additionally, this feature allows for a gradual migration of a C or C++ codebase to Rust, which can be beneficial in large, complex projects.
 
 #### Performance:
-Rust is designed to provide control over low-level details such as memory layout, like C and C++. This means that Rust programs can be as fast as their C or C++ counterparts. Rust also allows fine-grained control over memory management, which can lead to more efficient programs. Rust achieves this through zero-cost abstractions, where higher-level constructs compile into as efficient a form as if they were written in lower-level code [3]. For example, Rust’s ownership model allows for automatic memory management without the need for a garbage collector, which can lead to performance improvements in certain scenarios.
+Rust is designed to provide control over low-level details such as memory layout, like C and C++. This means that Rust programs can be as fast as their C or C++ counterparts. Rust also allows fine-grained control over memory management, which can lead to more efficient programs. Rust achieves this through zero-cost abstractions, where higher-level constructs compile into as efficient a form as if they were written in lower-level code [9]. For example, Rust’s ownership model allows for automatic memory management without the need for a garbage collector, which can lead to performance improvements in certain scenarios.
 ## Reasons Not to Use Rust
 
 ### Speed of Development 
@@ -89,9 +89,27 @@ Our analysis on the Rust code from our project provided keen insights on secure 
 The experience from rewriting the program with Rust, its memory safety, productivity gains, and compiler suggestions makes Rust's potential for future projects increase. Rust's focus on safety, performance, and concurrency is ideal for developing secure software, especially in security-sensitive fields. Adopting Rust can reduce memory-related risks and ensure high-standard, secure, and reliable software.
 
 
+## References
 
-[1].  Xu, H., Chen, Z., Sun, M., Zhou, Y., & Lyu, M. R. (2021). Memory-safety challenge considered solved? An in-depth study with all Rust CVEs. ACM Transactions on Software Engineering and Methodology (TOSEM), 31(1), 1-25.
+[1] S. Zhu, Z. Zhang, B. Qin, A. Xiong, and L. Song, “Learning and programming challenges of rust,” Proceedings of the 44th International Conference on Software Engineering, May 2022, doi: https://doi.org/10.1145/3510003.3510164. 
 
-[2].  Maiga, A., Artho, C., Gilcher, F., & Moy, Y. (2023, October). Does Rust SPARK Joy? Safe Bindings from Rust to SPARK, Applied to the BBQueue Library. In _Proceedings of the 9th ACM SIGPLAN International Workshop on Formal Techniques for Safety-Critical Systems_ (pp. 37-47).
 
-[3].  Holk, E., Pathirage, M., Chauhan, A., Lumsdaine, A., & Matsakis, N. D. (2013, May). GPU programming in rust: Implementing high-level abstractions in a systems-level language. In 2013 IEEE International Symposium on Parallel & Distributed Processing, Workshops and Phd Forum (pp. 315-324). IEEE.
+[2] S. Mergendahl, N. Burow, and Hamed Okhravi, “Cross-Language Attacks,” Jan. 2022, doi: https://doi.org/10.14722/ndss.2022.24078. 
+
+
+‌[3] Bugden, William, and Ayman Alahmar. "Rust: The programming language for safety and performance." arXiv preprint arXiv:2206.05503 (2022). 
+
+
+[4] Zhang, Yuchen, Yunhang Zhang, Georgios Portokalidis, and Jun Xu. "Towards understanding the runtime performance of rust." In Proceedings of the 37th IEEE/ACM International Conference on Automated Software Engineering, pp. 1-6.[1] 2022. 
+
+
+[5] Fulton, Kelsey R., Anna Chan, Daniel Votipka, Michael Hicks, and Michelle L. Mazurek. "Benefits and drawbacks of adopting a secure programming language: Rust as a case study." In Seventeenth Symposium on Usable Privacy and Security (SOUPS 2021), pp. 597-616. 2021. 
+
+
+[6] W. Yang, L. Song, and Y. Xue, “Rust-lancet: Automated Ownership-Rule-Violation Fixing with Behavior Preservation,” Proceedings of the IEEE/ACM 46th International Conference on Software Engineering, Apr. 2024, doi: https://doi.org/10.1145/3597503.3639103. 
+
+[7].  Xu, H., Chen, Z., Sun, M., Zhou, Y., & Lyu, M. R. (2021). Memory-safety challenge considered solved? An in-depth study with all Rust CVEs. ACM Transactions on Software Engineering and Methodology (TOSEM), 31(1), 1-25.
+
+[8].  Maiga, A., Artho, C., Gilcher, F., & Moy, Y. (2023, October). Does Rust SPARK Joy? Safe Bindings from Rust to SPARK, Applied to the BBQueue Library. In _Proceedings of the 9th ACM SIGPLAN International Workshop on Formal Techniques for Safety-Critical Systems_ (pp. 37-47).
+
+[9].  Holk, E., Pathirage, M., Chauhan, A., Lumsdaine, A., & Matsakis, N. D. (2013, May). GPU programming in rust: Implementing high-level abstractions in a systems-level language. In 2013 IEEE International Symposium on Parallel & Distributed Processing, Workshops and Phd Forum (pp. 315-324). IEEE.
