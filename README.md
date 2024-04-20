@@ -10,11 +10,182 @@ Option 6 - Rust programming
 * [Rust-lancet: Automated Ownership-Rule-Violation Fixing with Behavior Preservation](https://songlh.github.io/paper/lancet.pdf)
 ### Based on these papers, answer the following questions
 
-* how does Rust prevent common memory errors, like buffer overflow and use-after-free?
-* what is the remaining security issues in rust programs?
-* what is the main challenges of programming in rust?
-* how can we make rust easy to use?
-* what is the main idea of rust-lancet? do you think it is useful for rust developers and why?
+
+## Question 1: How does Rust prevent common memory errors, like buffer overflow and use-after-free? 
+
+
+### Ownership System: 
+Rust employs the concept of ownership, where each value in memory has a single "owner" that is responsible for deallocating the memory when the value goes out of scope. This prevents multiple pointers from accessing or modifying the same memory concurrently, thus mitigating the risk of data races and concurrent modification issues. 
+
+In our rust code:  
+
+pub struct Maze { 
+
+    pub map: [[i32; COLS]; ROWS], 
+
+    pub start: (usize, usize), 
+
+    pub fin: (usize, usize), 
+
+} 
+
+In the Maze struct, the ownership of the map field is clearly defined. The map owns the 2D array of integers representing the maze. This ownership ensures that the memory associated with the maze data is deallocated when the Maze struct goes out of scope. 
+
+### Borrowing and References: 
+Borrowing and References: Instead of relying solely on ownership, Rust introduces the concept of borrowing, allowing multiple immutable references or one mutable reference to a value. These references are checked at a program’s compile time to ensure that they don’t outlive the data they refer to or conflict with other references [1]. This prevents both dangling pointers and data races. 
+
+From out rust code:  
+
+fn get_walkable_neighbors(&self, point: VisitedCell) -> Vec<VisitedCell> { 
+
+    // Function taking immutable reference to self (borrowing) 
+
+    // and returning a vector of VisitedCell references 
+
+} 
+
+The get_walkable_neighbors function takes an immutable reference to self, allowing it to borrow the Maze instance. This ensures that get_walkable_neighbors cannot modify the Maze instance, preventing concurrent modifications. Additionally, the function returns a vector of VisitedCell references, which borrows data from the Maze instance rather than taking ownership. 
+
+### Lifetime Annotations:  
+Rust's borrow checker analyzes the lifetimes of references to determine their validity. Developers can use lifetime annotations to explicitly specify the relationships between references, helping the compiler verify that references do not outlive the data they point to or reference data after it has been deallocated. 
+
+### No Null Pointers:  
+Rust does not have null pointers or null references by default. Instead, it uses an optional type called Option<T> to represent optional values. This eliminates the possibility of null pointer dereferencing errors, as the compiler ensures that values are properly initialized before use. 
+
+In our code, we can see rust avoids null pointers by using the Option type. In the load_grid function, the file is of type Option<File>. Instead of checking for null pointers, Rust uses the Option enum to represent the presence or absence of a value. Here, file.is_none() checks if the file variable contains a valid file handle. 
+
+### Bounds Checking: 
+Rust performs bounds checking on array accesses at runtime to prevent buffer overflow errors. This ensures that accesses to array elements are within the bounds of the array, preventing memory corruption due to invalid memory accesses. 
+
+Rust performs bounds checking to prevent buffer overflow errors. In the get_walkable_neighbors function, nx is checked against the bounds of the maze rows (ROWS) to ensure that array accesses stay within valid bounds. This prevents accessing memory outside the allocated array.  
+
+For example: 
+
+if nx < 0 || nx >= ROWS.try_into().unwrap() { 
+
+    continue; 
+
+} 
+
+### Unsafe Rust: 
+While Rust emphasizes memory safety, it also provides an unsafe keyword for opting into low-level operations that bypass the safety checks of the compiler. However, the use of unsafe blocks is confined to specific portions of code where safety invariants can be manually upheld by the developer, and such code is subject to rigorous review and testing.  
+
+Unsafe Rust allows bypassing some of the safety checks of the compiler. In this example, unsafe is used to push a value into the been_to vector without performing bounds checking or lifetime validation. However, the use of unsafe should be minimized and contained within well-audited blocks. 
+
+Example: 
+
+unsafe { 
+
+    been_to.push(child.coord); 
+
+} 
+
+
+## Question 2: What are the remaining security issues in rust programs? 
+
+
+### Concurrency and Data Races 
+In Rust: let mut been_to: Vec<(usize, usize)> = Vec::new(); 
+
+Although Rust's ownership system prevents data races at compile time, concurrent access to mutable data can still lead to logic errors. In this example, been_to is a mutable vector that could be accessed concurrently by multiple threads. To mitigate this, we should use Rust's concurrency primitives like Mutex or Arc to enforce thread safety [2]. 
+
+
+### Unsafe Code:  
+Rust allows bypassing safety checks using the unsafe keyword. While necessary for interfacing with low-level system APIs or optimizing performance-critical code, misuse of unsafe can introduce vulnerabilities like buffer overflows or null pointer dereferences. It's crucial to use unsafe judiciously and carefully audit such code.  
+
+unsafe { 
+
+    been_to.push(child.coord); 
+
+} 
+
+
+### Fuzzing and Input Validation: 
+For example: let file = fs::read_to_string(file_name).unwrap(); 
+
+Reading input from external sources like files or network streams without proper validation can lead to security vulnerabilities like buffer overflows or injection attacks. In this example, read_to_string assumes that the file exists and can be read, potentially leading to unexpected behavior or vulnerabilities. Input should be thoroughly validated and sanitized to prevent exploits. 
+
+### Memory Safety Bugs in External Dependencies: 
+For example: let lines = file.lines(); 
+
+Rust programs often rely on external dependencies, which may contain memory safety bugs. While Rust's safety guarantees apply to safe Rust code, unsafe code within dependencies could introduce vulnerabilities. It's essential to vet dependencies for security issues and keep them updated to minimize risks. 
+
+### Memory Leaks and Resource Exhaustion: 
+For example: return Some(child); 
+
+Improper resource management can lead to memory leaks or resource exhaustion. While Rust's ownership system mitigates many memory-related issues, incorrect handling of resources like file handles or network connections could still occur. Proper resource management, such as using RAII patterns or Rust's Drop trait, is essential to prevent these vulnerabilities. [3] 
+
+
+## Question 3: What are the main challenges of programming in rust? 
+
+
+### Ownership and Borrowing 
+In Rust: let mut been_to: Vec<(usize, usize)> = Vec::new(); 
+
+Compared to C: std::vector<Coord *> been_to; 
+
+In Rust, managing ownership and borrowing can be challenging, especially when dealing with complex data structures like vectors or structs. Rust's ownership system ensures memory safety by enforcing strict rules on ownership transfer and borrowing, which may require careful consideration and restructuring of code compared to the more relaxed memory management in C. 
+
+
+### Concurrency and Mutable State 
+In Rust: let mut queue: VecDeque<VisitedCell> = VecDeque::new(); 
+
+In C: std::deque<Coord *> q; 
+
+Rust encourages safe concurrency through its ownership and borrowing system, which helps prevent data races and mutable state issues at compile time. However, managing concurrent data structures and ensuring thread safety can be challenging compared to C, where developers have more flexibility but must manually synchronize access to shared data. 
+
+### Safety vs. Performance Trade-offs 
+In Rust: unsafe { 
+
+    been_to.push(child.coord); 
+
+} 
+
+In C: been_to.push_back(child); 
+
+Rust's safety guarantees come with a performance cost, particularly when using unsafe code blocks to bypass safety checks. While Rust aims to provide safe abstractions without sacrificing performance, developers may need to carefully balance safety and performance considerations, especially in performance-critical sections of code, compared to C, where performance optimizations are more manual but potentially more straightforward.
+
+### Learning Curve: 
+Rust introduces new concepts like ownership, borrowing, lifetimes, and pattern matching, which may require developers to invest time in understanding and mastering these concepts compared to the more straightforward syntax and semantics of C. While Rust's safety features provide benefits in terms of reliability and maintainability, they also require a learning curve for developers transitioning from languages like C. 
+
+For Example:
+In Rust: let mut fin: (usize, usize) = (0, 0); 
+In C: int fin[2] = {0, 0}; [4]
+
+
+##Question 4: How can we make rust easy to use?
+
+
+### Improved Documentation and Learning Resources 
+Providing clear and comprehensive documentation is essential for reducing the learning curve associated with Rust. Alongside documentation, tutorials, guides, and examples play a crucial role in helping developers understand the language's concepts and best practices. Detailed explanations, code samples, and real-world use cases contribute significantly to enhancing understanding and facilitating usage, especially for complex concepts that may be challenging to grasp initially. 
+
+### Ergonomic Syntax and Abstractions 
+Rust's syntax prioritizes clarity and expressiveness, aiming to enhance readability and ease of use compared to more verbose languages. The language offers ergonomic abstractions and data structures that reduce boilerplate code and simplify common tasks. These abstractions not only make code more concise but also improve developer productivity by streamlining the development process. 
+
+### Tooling and IDE Support 
+Rust's build system, Cargo, along with tools like Rust Analyzer and Rustfmt, provides a seamless development experience for programmers. Robust tooling and IDE support, including features such as code completion, linting, and refactoring, significantly enhance developer productivity and ease of use. These tools not only aid in writing high-quality code but also assist developers in navigating and understanding Rust's features and libraries.
+
+### Community Engagement and Support 
+Rust boasts an active and welcoming community that fosters support and engagement among developers of all skill levels. Forums, chat rooms, and community events provide valuable platforms for developers to seek help, share knowledge, and collaborate on projects. The supportive nature of the Rust community encourages learning and exploration, making Rust more accessible and inclusive to a wide range of developers.
+
+### Incremental Learning and Adoption 
+Encouraging incremental learning and adoption of Rust is essential for developers to grasp the language's concepts gradually. Providing small, manageable projects and tutorials allows developers to build confidence and familiarity with Rust over time. Starting with simple examples and gradually introducing more advanced features helps developers gain practical experience and solidify their understanding of Rust's capabilities. [5] 
+
+
+## Question 5: What is the main idea of rust-lancet? Do you think it is useful for rust developers and why? 
+
+
+### Main Idea Overview: 
+Rust-lancet is a tool that focusses on ownership-rule-violations, as the way it works it takes a program with safety-rule violations as an input and proceeds to either produce a modified program that does not contain any violations and preservers the semantics of the original program, or it will report that it cannot successfully patch the program following several attempts [6]. 
+
+### Usefulness Discussion 
+In essence, the idea of Rust-lancet is to automate the process of fixing the safety violations that exist within a programmer's code, as the safety rules are as strict as they are hefty. This tool can indeed be useful, so long as it is not solely relied upon, as to put blind faith in this tool and expect a given program to truly be both violation free and fully functional as intended by the programmer 100% of the time would be absurd. 
+
+### Additional Consideration 
+Another point to consider is that the tool is used to assist the optimization not only the work, but also the workflow for the programmer, so should the tool continuously fail after constant tweaking, it may have been more efficient for the programmer to have manually fixed the safety-rule violations than not in the essence of time and peace of mind. 
+
+### Closing Thoughts 
+In summation, as with most tools that are meant to automate tasks, they are best used and tweaked within the means of their use cases, and even regardless of the use case, they should always be monitored and checked for correctness to ensure optimal results.
   
 # Part B
 
