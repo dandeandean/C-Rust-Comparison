@@ -17,7 +17,7 @@ Option 6 - Rust programming
 ### Ownership System: 
 Rust employs the concept of ownership, where each value in memory has a single "owner" that is responsible for deallocating the memory when the value goes out of scope. This prevents multiple pointers from accessing or modifying the same memory concurrently, thus mitigating the risk of data races and concurrent modification issues. 
 
-In our rust code:  
+In our Rust code:  
 
 ```Rust
 pub struct Maze { 
@@ -36,7 +36,7 @@ In the Maze struct, the ownership of the map field is clearly defined. The map o
 ### Borrowing and References: 
 Borrowing and References: Instead of relying solely on ownership, Rust introduces the concept of borrowing, allowing multiple immutable references or one mutable reference to a value. These references are checked at a program’s compile time to ensure that they don’t outlive the data they refer to or conflict with other references [1]. This prevents both dangling pointers and data races. 
 
-From out rust code:  
+From out Rust code:  
 
 ```Rust
 fn get_walkable_neighbors(&self, point: VisitedCell) -> Vec<VisitedCell> { 
@@ -130,17 +130,29 @@ Improper resource management can lead to memory leaks or resource exhaustion. Wh
 
 
 ### Ownership and Borrowing 
-In Rust: ```Rust let mut been_to: Vec<(usize, usize)> = Vec::new(); ```
+In Rust:
+```Rust
+let mut been_to: Vec<(usize, usize)> = Vec::new();
+```
 
-Compared to C: ```C std::vector<Coord *> been_to; ```
+Compared to C:
+```C
+C std::vector<Coord *> been_to;
+```
 
 In Rust, managing ownership and borrowing can be challenging, especially when dealing with complex data structures like vectors or structs. Rust's ownership system ensures memory safety by enforcing strict rules on ownership transfer and borrowing, which may require careful consideration and restructuring of code compared to the more relaxed memory management in C. 
 
 
 ### Concurrency and Mutable State 
-In Rust: ```Rust let mut queue: VecDeque<VisitedCell> = VecDeque::new(); ```
+In Rust:
+```Rust
+Rust let mut queue: VecDeque<VisitedCell> = VecDeque::new();
+```
 
-In C: ```C std::deque<Coord *> q; ```
+In C:
+```C
+std::deque<Coord *> q;
+```
 
 Rust encourages safe concurrency through its ownership and borrowing system, which helps prevent data races and mutable state issues at compile time. However, managing concurrent data structures and ensuring thread safety can be challenging compared to C, where developers have more flexibility but must manually synchronize access to shared data. 
 
@@ -154,7 +166,10 @@ unsafe {
 }
 ```
 
-In C: ```C been_to.push_back(child); ```
+In C:
+```C
+been_to.push_back(child);
+```
 
 Rust's safety guarantees come with a performance cost, particularly when using unsafe code blocks to bypass safety checks. While Rust aims to provide safe abstractions without sacrificing performance, developers may need to carefully balance safety and performance considerations, especially in performance-critical sections of code, compared to C, where performance optimizations are more manual but potentially more straightforward.
 
