@@ -19,6 +19,7 @@ Rust employs the concept of ownership, where each value in memory has a single "
 
 In our rust code:  
 
+```Rust
 pub struct Maze { 
 
     pub map: [[i32; COLS]; ROWS], 
@@ -27,7 +28,8 @@ pub struct Maze {
 
     pub fin: (usize, usize), 
 
-} 
+}
+``` 
 
 In the Maze struct, the ownership of the map field is clearly defined. The map owns the 2D array of integers representing the maze. This ownership ensures that the memory associated with the maze data is deallocated when the Maze struct goes out of scope. 
 
@@ -36,13 +38,15 @@ Borrowing and References: Instead of relying solely on ownership, Rust introduce
 
 From out rust code:  
 
+```Rust
 fn get_walkable_neighbors(&self, point: VisitedCell) -> Vec<VisitedCell> { 
 
     // Function taking immutable reference to self (borrowing) 
 
     // and returning a vector of VisitedCell references 
 
-} 
+}
+```
 
 The get_walkable_neighbors function takes an immutable reference to self, allowing it to borrow the Maze instance. This ensures that get_walkable_neighbors cannot modify the Maze instance, preventing concurrent modifications. Additionally, the function returns a vector of VisitedCell references, which borrows data from the Maze instance rather than taking ownership. 
 
@@ -61,11 +65,13 @@ Rust performs bounds checking to prevent buffer overflow errors. In the get_walk
 
 For example: 
 
+```Rust
 if nx < 0 || nx >= ROWS.try_into().unwrap() { 
 
     continue; 
 
-} 
+}
+```
 
 ### Unsafe Rust: 
 While Rust emphasizes memory safety, it also provides an unsafe keyword for opting into low-level operations that bypass the safety checks of the compiler. However, the use of unsafe blocks is confined to specific portions of code where safety invariants can be manually upheld by the developer, and such code is subject to rigorous review and testing.  
@@ -74,11 +80,13 @@ Unsafe Rust allows bypassing some of the safety checks of the compiler. In this 
 
 Example: 
 
+```Rust
 unsafe { 
 
     been_to.push(child.coord); 
 
-} 
+}
+```
 
 
 ## Question 2: What are the remaining security issues in rust programs? 
@@ -93,11 +101,13 @@ Although Rust's ownership system prevents data races at compile time, concurrent
 ### Unsafe Code:  
 Rust allows bypassing safety checks using the unsafe keyword. While necessary for interfacing with low-level system APIs or optimizing performance-critical code, misuse of unsafe can introduce vulnerabilities like buffer overflows or null pointer dereferences. It's crucial to use unsafe judiciously and carefully audit such code.  
 
+```Rust
 unsafe { 
 
     been_to.push(child.coord); 
 
-} 
+}
+```
 
 
 ### Fuzzing and Input Validation: 
@@ -111,7 +121,7 @@ For example: let lines = file.lines();
 Rust programs often rely on external dependencies, which may contain memory safety bugs. While Rust's safety guarantees apply to safe Rust code, unsafe code within dependencies could introduce vulnerabilities. It's essential to vet dependencies for security issues and keep them updated to minimize risks. 
 
 ### Memory Leaks and Resource Exhaustion: 
-For example: return Some(child); 
+For example: ```Rust return Some(child); ```
 
 Improper resource management can lead to memory leaks or resource exhaustion. While Rust's ownership system mitigates many memory-related issues, incorrect handling of resources like file handles or network connections could still occur. Proper resource management, such as using RAII patterns or Rust's Drop trait, is essential to prevent these vulnerabilities. [3] 
 
@@ -120,28 +130,31 @@ Improper resource management can lead to memory leaks or resource exhaustion. Wh
 
 
 ### Ownership and Borrowing 
-In Rust: let mut been_to: Vec<(usize, usize)> = Vec::new(); 
+In Rust: ```Rust let mut been_to: Vec<(usize, usize)> = Vec::new(); ```
 
-Compared to C: std::vector<Coord *> been_to; 
+Compared to C: ```C std::vector<Coord *> been_to; ```
 
 In Rust, managing ownership and borrowing can be challenging, especially when dealing with complex data structures like vectors or structs. Rust's ownership system ensures memory safety by enforcing strict rules on ownership transfer and borrowing, which may require careful consideration and restructuring of code compared to the more relaxed memory management in C. 
 
 
 ### Concurrency and Mutable State 
-In Rust: let mut queue: VecDeque<VisitedCell> = VecDeque::new(); 
+In Rust: ```Rust let mut queue: VecDeque<VisitedCell> = VecDeque::new(); ```
 
-In C: std::deque<Coord *> q; 
+In C: ```C std::deque<Coord *> q; ```
 
 Rust encourages safe concurrency through its ownership and borrowing system, which helps prevent data races and mutable state issues at compile time. However, managing concurrent data structures and ensuring thread safety can be challenging compared to C, where developers have more flexibility but must manually synchronize access to shared data. 
 
 ### Safety vs. Performance Trade-offs 
-In Rust: unsafe { 
+In Rust:
+```Rust
+unsafe { 
 
     been_to.push(child.coord); 
 
-} 
+}
+```
 
-In C: been_to.push_back(child); 
+In C: ```C been_to.push_back(child); ```
 
 Rust's safety guarantees come with a performance cost, particularly when using unsafe code blocks to bypass safety checks. While Rust aims to provide safe abstractions without sacrificing performance, developers may need to carefully balance safety and performance considerations, especially in performance-critical sections of code, compared to C, where performance optimizations are more manual but potentially more straightforward.
 
@@ -149,11 +162,14 @@ Rust's safety guarantees come with a performance cost, particularly when using u
 Rust introduces new concepts like ownership, borrowing, lifetimes, and pattern matching, which may require developers to invest time in understanding and mastering these concepts compared to the more straightforward syntax and semantics of C. While Rust's safety features provide benefits in terms of reliability and maintainability, they also require a learning curve for developers transitioning from languages like C. 
 
 For Example:
-In Rust: let mut fin: (usize, usize) = (0, 0); 
+In Rust:
+```Rust
+let mut fin: (usize, usize) = (0, 0); 
 In C: int fin[2] = {0, 0}; [4]
+```
 
 
-##Question 4: How can we make rust easy to use?
+## Question 4: How can we make rust easy to use?
 
 
 ### Improved Documentation and Learning Resources 
